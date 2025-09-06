@@ -7,7 +7,7 @@
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f5f6fa;
-    color: #2c3e50;
+    color: #ecf0f1;
     line-height: 1.6;
 }
 
@@ -135,19 +135,19 @@ header p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    gap: 14px;
     min-height: 400px;
     padding: 20px;
 }
 
 .floor-row {
     display: flex;
-    gap: 3px;
+    gap: 1px;
 }
 
 .hex-tile {
     width: 50px;
-    height: 43.3px;
+    height: 30.3px;
     background-color: #ecf0f1;
     position: relative;
     cursor: pointer;
@@ -182,7 +182,7 @@ header p {
 }
 
 .floor-row.offset {
-    margin-left: 26.5px;
+    margin-left: 51px;
 }
 
 @media (max-width: 768px) {
