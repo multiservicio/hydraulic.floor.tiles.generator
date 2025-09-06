@@ -1,8 +1,8 @@
 class HydraulicFloorGenerator {
     constructor() {
         this.selectedColor = '#2c3e50';
-        this.gridRows = 10;
-        this.gridCols = 12;
+        this.gridRows = 20;
+        this.gridCols = 20;
         this.init();
     }
 
