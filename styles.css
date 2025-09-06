@@ -55,6 +55,7 @@ header p {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    color:#2c3e50;
 }
 
 .size-inputs label {
@@ -95,6 +96,26 @@ header p {
 }
 
 .resize-btn:active {
+    transform: translateY(1px);
+}
+
+.auto-fill-btn {
+    padding: 10px 20px;
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.auto-fill-btn:hover {
+    background-color: #d35400;
+}
+
+.auto-fill-btn:active {
     transform: translateY(1px);
 }
 
