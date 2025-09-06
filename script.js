@@ -3,6 +3,17 @@ class HydraulicFloorGenerator {
         this.selectedColor = '#2c3e50';
         this.gridRows = 20;
         this.gridCols = 20;
+        this.colorNames = {
+            '#2C3E50': 'Navy',
+            '#8B3A3A': 'Burgundy', 
+            '#F5F5DC': 'Cream',
+            '#CD853F': 'Terracotta',
+            '#D3D3D3': 'Light Gray',
+            '#A9A9A9': 'Medium Gray',
+            '#F5DEB3': 'Beige',
+            '#C0C0C0': 'Warm Gray',
+            '#D4A5A5': 'Dusty Rose'
+        };
         this.init();
     }
 
@@ -37,6 +48,9 @@ class HydraulicFloorGenerator {
             
             grid.appendChild(rowElement);
         }
+        
+        // Update summary after creating new grid
+        this.updateColorSummary();
     }
 
     setupColorPalette() {
@@ -342,6 +356,75 @@ class HydraulicFloorGenerator {
         tile.style.backgroundColor = color;
         tile.style.borderBottomColor = color;
         tile.style.borderTopColor = color;
+        this.updateColorSummary();
+    }
+
+    updateColorSummary() {
+        const tiles = document.querySelectorAll('.hex-tile');
+        const colorCounts = {};
+        const defaultColor = 'rgb(236, 240, 241)'; // #ecf0f1 in RGB
+        
+        // Count colors from all tiles
+        tiles.forEach(tile => {
+            const bgColor = tile.style.backgroundColor;
+            if (bgColor && bgColor !== defaultColor) {
+                // Convert RGB to hex for consistency
+                const hexColor = this.rgbToHex(bgColor);
+                colorCounts[hexColor] = (colorCounts[hexColor] || 0) + 1;
+            }
+        });
+
+        this.renderColorSummary(colorCounts);
+    }
+
+    renderColorSummary(colorCounts) {
+        const summaryContainer = document.getElementById('color-summary');
+        
+        if (Object.keys(colorCounts).length === 0) {
+            summaryContainer.innerHTML = '<p class="no-colors">No tiles colored yet. Start designing your floor!</p>';
+            return;
+        }
+
+        // Sort by count (descending) then by color name
+        const sortedColors = Object.entries(colorCounts)
+            .sort((a, b) => b[1] - a[1] || (this.colorNames[a[0]] || '').localeCompare(this.colorNames[b[0]] || ''));
+
+        const summaryItems = sortedColors.map(([color, count]) => {
+            const colorName = this.colorNames[color] || 'Unknown';
+            return `
+                <div class="color-count-item">
+                    <div class="color-count-swatch" style="background-color: ${color};"></div>
+                    <span class="color-count-text">${colorName}: ${count} tile${count !== 1 ? 's' : ''}</span>
+                </div>
+            `;
+        }).join('');
+
+        summaryContainer.innerHTML = summaryItems;
+    }
+
+    rgbToHex(rgb) {
+        // Handle already hex colors
+        if (rgb.startsWith('#')) return rgb.toUpperCase();
+        
+        // Parse RGB string like "rgb(44, 62, 80)"
+        const rgbMatch = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (!rgbMatch) return rgb;
+        
+        const r = parseInt(rgbMatch[1]);
+        const g = parseInt(rgbMatch[2]);
+        const b = parseInt(rgbMatch[3]);
+        
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    }
+
+    clearGrid() {
+        const tiles = document.querySelectorAll('.hex-tile');
+        tiles.forEach(tile => {
+            tile.style.backgroundColor = '#ecf0f1';
+            tile.style.borderBottomColor = '#ecf0f1';
+            tile.style.borderTopColor = '#ecf0f1';
+        });
+        this.updateColorSummary();
     }
 
     generateRandomPattern() {
