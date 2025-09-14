@@ -99,12 +99,16 @@ class HydraulicFloorGenerator {
         });
     }
 
-    paintTile(tile) {
-        tile.style.backgroundColor = this.selectedColor;
-        tile.style.borderBottomColor = this.selectedColor;
-        tile.style.borderTopColor = this.selectedColor;
+    // Paint a tile with a given color; defaults to the currently selected color.
+    paintTile(tile, color = this.selectedColor) {
+        tile.style.backgroundColor = color;
+        tile.style.borderBottomColor = color;
+        tile.style.borderTopColor = color;
+        // Keep summary in sync when painting interactively or programmatically
+        this.updateColorSummary();
     }
 
+    // Clear the grid and refresh the summary
     clearGrid() {
         const tiles = document.querySelectorAll('.hex-tile');
         tiles.forEach(tile => {
@@ -112,6 +116,7 @@ class HydraulicFloorGenerator {
             tile.style.borderBottomColor = '#ecf0f1';
             tile.style.borderTopColor = '#ecf0f1';
         });
+        this.updateColorSummary();
     }
 
     setupGridSizeControls() {
@@ -352,12 +357,7 @@ class HydraulicFloorGenerator {
         return weightedOptions[0].color;
     }
 
-    paintTile(tile, color) {
-        tile.style.backgroundColor = color;
-        tile.style.borderBottomColor = color;
-        tile.style.borderTopColor = color;
-        this.updateColorSummary();
-    }
+    // (Removed duplicate paintTile; unified above)
 
     updateColorSummary() {
         const tiles = document.querySelectorAll('.hex-tile');
@@ -417,15 +417,7 @@ class HydraulicFloorGenerator {
         return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
     }
 
-    clearGrid() {
-        const tiles = document.querySelectorAll('.hex-tile');
-        tiles.forEach(tile => {
-            tile.style.backgroundColor = '#ecf0f1';
-            tile.style.borderBottomColor = '#ecf0f1';
-            tile.style.borderTopColor = '#ecf0f1';
-        });
-        this.updateColorSummary();
-    }
+    // (Removed duplicate clearGrid; unified above)
 
     generateRandomPattern() {
         const tiles = document.querySelectorAll('.hex-tile');
