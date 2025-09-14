@@ -3,6 +3,8 @@ class HydraulicFloorGenerator {
         this.selectedColor = '#2c3e50';
         this.gridRows = 20;
         this.gridCols = 20;
+        this.weatheringEnabled = true;
+        this.weatheringIntensity = 0.15; // 15%
         this.colorNames = {
             '#2C3E50': 'Navy',
             '#8B3A3A': 'Burgundy', 
@@ -23,6 +25,7 @@ class HydraulicFloorGenerator {
         this.setupTileInteraction();
         this.setupGridSizeControls();
         this.setupAutoFill();
+        this.setupWeatheringControls();
     }
 
     createGrid() {
@@ -99,12 +102,16 @@ class HydraulicFloorGenerator {
         });
     }
 
-    paintTile(tile) {
-        tile.style.backgroundColor = this.selectedColor;
-        tile.style.borderBottomColor = this.selectedColor;
-        tile.style.borderTopColor = this.selectedColor;
+    // Paint a tile with a given color; defaults to the currently selected color.
+    paintTile(tile, color = this.selectedColor) {
+        tile.style.backgroundColor = color;
+        tile.style.borderBottomColor = color;
+        tile.style.borderTopColor = color;
+        // Keep summary in sync when painting interactively or programmatically
+        this.updateColorSummary();
     }
 
+    // Clear the grid and refresh the summary
     clearGrid() {
         const tiles = document.querySelectorAll('.hex-tile');
         tiles.forEach(tile => {
@@ -112,6 +119,7 @@ class HydraulicFloorGenerator {
             tile.style.borderBottomColor = '#ecf0f1';
             tile.style.borderTopColor = '#ecf0f1';
         });
+        this.updateColorSummary();
     }
 
     setupGridSizeControls() {
@@ -163,6 +171,28 @@ class HydraulicFloorGenerator {
         });
     }
 
+    setupWeatheringControls() {
+        const enabledEl = document.getElementById('weathering-enabled');
+        const intensityEl = document.getElementById('weathering-intensity');
+        const valueEl = document.getElementById('weathering-intensity-value');
+
+        if (!enabledEl || !intensityEl || !valueEl) return;
+
+        enabledEl.checked = this.weatheringEnabled;
+        intensityEl.value = Math.round(this.weatheringIntensity * 100);
+        valueEl.textContent = `${Math.round(this.weatheringIntensity * 100)}%`;
+
+        enabledEl.addEventListener('change', () => {
+            this.weatheringEnabled = enabledEl.checked;
+        });
+
+        intensityEl.addEventListener('input', () => {
+            const pct = parseInt(intensityEl.value, 10) || 0;
+            this.weatheringIntensity = Math.max(0, Math.min(1, pct / 100));
+            valueEl.textContent = `${pct}%`;
+        });
+    }
+
     generateBeautifulDesign() {
         const tileColors = [
             {color: "#2C3E50", name: "navy", weight: 5},
@@ -189,14 +219,16 @@ class HydraulicFloorGenerator {
         // Step 3: Fill remaining positions with weighted selection
         this.fillRemainingPositions(hexCoordinates, colorMap, tileColors);
         
-        // Step 4: Apply colors to tiles
+        // Step 4: Apply colors to tiles (with optional weathering)
         tiles.forEach(tile => {
             const row = parseInt(tile.dataset.row);
             const col = parseInt(tile.dataset.col);
             const key = `${row}-${col}`;
-            const color = colorMap.get(key) || this.weightedRandomSelect(tileColors);
-            
-            this.paintTile(tile, color);
+            const baseColor = colorMap.get(key) || this.weightedRandomSelect(tileColors);
+            const finalColor = (this.weatheringEnabled && this.weatheringIntensity > 0)
+                ? this.applyWeathering(baseColor, this.weatheringIntensity)
+                : baseColor;
+            this.paintTile(tile, finalColor);
         });
     }
 
@@ -352,11 +384,19 @@ class HydraulicFloorGenerator {
         return weightedOptions[0].color;
     }
 
-    paintTile(tile, color) {
-        tile.style.backgroundColor = color;
-        tile.style.borderBottomColor = color;
-        tile.style.borderTopColor = color;
-        this.updateColorSummary();
+    // (Removed duplicate paintTile; unified above)
+
+    applyWeathering(color, intensity) {
+        const rgb = this.hexToRgb(color);
+        if (!rgb) return color;
+        const vary = (channel) => {
+            const factor = 1 + (Math.random() * 2 - 1) * intensity; // 1 ± intensity
+            return this.clamp(Math.round(channel * factor), 0, 255);
+        };
+        const r = vary(rgb.r);
+        const g = vary(rgb.g);
+        const b = vary(rgb.b);
+        return this.rgbToHex(`rgb(${r}, ${g}, ${b})`);
     }
 
     updateColorSummary() {
@@ -417,14 +457,22 @@ class HydraulicFloorGenerator {
         return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
     }
 
-    clearGrid() {
-        const tiles = document.querySelectorAll('.hex-tile');
-        tiles.forEach(tile => {
-            tile.style.backgroundColor = '#ecf0f1';
-            tile.style.borderBottomColor = '#ecf0f1';
-            tile.style.borderTopColor = '#ecf0f1';
-        });
-        this.updateColorSummary();
+    // (Removed duplicate clearGrid; unified above)
+
+    hexToRgb(hex) {
+        if (!hex || typeof hex !== 'string') return null;
+        const m = hex.trim().toLowerCase().match(/^#([0-9a-f]{6})$/i);
+        if (!m) return null;
+        const num = parseInt(m[1], 16);
+        return {
+            r: (num >> 16) & 255,
+            g: (num >> 8) & 255,
+            b: num & 255
+        };
+    }
+
+    clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
     }
 
     generateRandomPattern() {
