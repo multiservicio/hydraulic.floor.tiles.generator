@@ -6,9 +6,9 @@
 - Run: Open `index.html` in any modern browser.
 
 - `index.html`: App shell and controls (size inputs, palette, grid, summary, effects).
-- `styles.css`: Hex tile layout (CSS pseudo‑elements), responsive styles, UI polish.
-- `script.js`: Main logic in `HydraulicFloorGenerator` class (grid creation, interactions, auto‑fill algorithm, color summary).
-- `pseudo.code`: Pseudocode/spec for the auto‑generation algorithm and potential enhancements (e.g., weathering).
+- `assets/css/styles.css`: Hex tile layout (CSS pseudo‑elements), responsive styles, UI polish.
+- `assets/js/main.js`: Main logic in `HydraulicFloorGenerator` class (grid creation, interactions, auto‑fill algorithm, color summary).
+- `docs/pseudo.md`: Pseudocode/spec for the auto‑generation algorithm and potential enhancements (e.g., weathering).
 
 ## How It Works
 - Hex grid: Rows of hex tiles; every other row is offset to form a honeycomb. Hex shapes use `:before`/`:after` triangles.
@@ -43,6 +43,6 @@
 
 ## Developer Pointers
 - Grid constraints: width 5-50, height 5-30.
-- Complementary color pairs used by the algorithm can be tuned in `script.js`.
+- Complementary color pairs used by the algorithm can be tuned in `assets/js/main.js`.
 - Color summary counts tiles by inline `backgroundColor`; default/unpainted tiles are ignored.
  - Weathering controls: `#weathering-enabled`, `#weathering-intensity`, `#weathering-intensity-value`; logic in `setupWeatheringControls()` and `applyWeathering()`.
