@@ -13,18 +13,18 @@
 ## How It Works
 - Hex grid: Rows of hex tiles; every other row is offset to form a honeycomb. Hex shapes use `:before`/`:after` triangles.
 - Painting: Click or click‑drag to paint tiles with the selected palette color.
-- Resizing: Width/height inputs (Width 5–50, Height 5–30) rebuild the grid.
+- Resizing: Width/height inputs (Width 5-50, Height 5-30) rebuild the grid.
 - Auto‑Generate: Algorithm creates clusters for accent/medium colors, then fills remaining tiles by weighted randomness adjusted by neighbor colors (prefers complementary, avoids repeats). When Weathering is enabled, each tile color is varied ±intensity before painting.
 - Summary: Counts colored tiles, groups by color name, shows swatches and totals.
- - Effects (Weathering): Toggle and intensity slider (0–30%) in the controls panel.
+ - Effects (Weathering): Toggle and intensity slider (0-30%) in the controls panel.
 
 ## Quick Start
 1) Open `index.html`.
 2) Pick a color in the palette.
 3) Click or drag on tiles to paint.
-4) Adjust grid size if needed and click “Resize Floor”.
+4) Adjust grid size if needed and click "Resize Floor".
 5) Optionally enable Weathering and choose an intensity.
-6) Click “Generate Beautiful Design” for an auto‑generated pattern.
+6) Click "Generate Beautiful Design" for an auto‑generated pattern.
 
 ## Recent Changes
 - Fixed manual painting bug by unifying `paintTile(tile, color = this.selectedColor)` and updating summary on paint.
@@ -42,7 +42,7 @@
 - Performance review for large grids; consider lightweight virtualisation if needed.
 
 ## Developer Pointers
-- Grid constraints: width 5–50, height 5–30.
+- Grid constraints: width 5-50, height 5-30.
 - Complementary color pairs used by the algorithm can be tuned in `script.js`.
 - Color summary counts tiles by inline `backgroundColor`; default/unpainted tiles are ignored.
  - Weathering controls: `#weathering-enabled`, `#weathering-intensity`, `#weathering-intensity-value`; logic in `setupWeatheringControls()` and `applyWeathering()`.
