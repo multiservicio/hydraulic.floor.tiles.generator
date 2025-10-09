@@ -3,7 +3,7 @@
 This document outlines the next steps for features, integrations, and fixes. Each item includes a short rationale and concrete acceptance criteria so the next agent can deliver confidently.
 
 ## 0) Priorities Snapshot
-- High: GDPR consent, Google Analytics (GA4) with Consent Mode v2, Bug fix: weathering and tile counter, Basic SEO meta.
+- High: GDPR consent, Google Analytics (GA4) with Consent Mode v2, Basic SEO meta.
 - Medium: Google AdSense (consent-gated), export/share flows, performance and CLS improvements, accessibility pass.
 - Low: PWA, i18n, preset patterns, undo/redo, pricing estimator.
 
@@ -32,7 +32,7 @@ This document outlines the next steps for features, integrations, and fixes. Eac
 - Implementation notes:
   - Use gtag.js with GA4 Measurement ID (placeholder `G-XXXXXXXXXX`).
   - Configure Consent Mode with `ad_storage`/`analytics_storage` set per consent.
-  - Track key events: `tile_painted`, `auto_fill_used`, `resize_grid`, `weathering_toggled`, `export_clicked`.
+  - Track key events: `tile_painted`, `auto_fill_used`, `resize_grid`, `export_clicked`.
   - Ensure IP anonymization and no PII.
 - Files to touch/create:
   - `assets/js/analytics.js`: `initAnalytics(id)`, `trackEvent(name, params)`; guard on consent.
@@ -70,27 +70,17 @@ This document outlines the next steps for features, integrations, and fixes. Eac
   - Meta present and valid per Lighthouse SEO audit.
   - OG/Twitter tags render in a validator (manual check acceptable).
 
-## 5) Bug Fix: Weathering breaks tile counter
-- Symptom: When weathering is on, small color variations inflate the color summary with many near-duplicate colors.
-- Approach A (recommended): Count by base palette color regardless of weathering.
-  - Store base color on paint: `tile.dataset.baseColor = baseColorHex`.
-  - `updateColorSummary()` uses `dataset.baseColor` when present; fallback to current color otherwise.
-- Approach B: Snap weathered RGB back to nearest palette color using Euclidean distance in RGB.
-  - Provide a map from hex to name; pick the closest within tolerance.
-- Acceptance criteria:
-  - With weathering enabled at any intensity, the counter groups tiles by the original palette colors and totals are correct.
-
-## 6) UX & Design Tools
+## 5) UX & Design Tools
 - Undo/redo (last 50 actions): paint, resize, auto-fill.
 - Eyedropper: click a colored tile to set active color.
 - Eraser: set tile back to default background.
 - Preset patterns: a few curated templates (e.g., borders, motifs) in a dropdown.
 - Export: download PNG and SVG snapshot; include color legend.
-- Share: generate URL with encoded state (grid size, placements, weathering, palette).
+- Share: generate URL with encoded state (grid size, placements, palette).
 - Acceptance criteria:
   - Undo/redo works across actions; export produces correct image with legend.
 
-## 7) Performance & Quality
+## 6) Performance & Quality
 - Virtualize rendering for large grids (>40x25) to keep interactions smooth.
 - Debounce resize and summary updates to reduce reflow work.
 - Precompute neighbor lookups; avoid repeated DOM queries.
@@ -98,7 +88,7 @@ This document outlines the next steps for features, integrations, and fixes. Eac
 - Acceptance criteria:
   - 60fps interaction on 50x30 grid on a mid-range laptop; Lighthouse Performance > 90.
 
-## 8) Accessibility & i18n
+## 7) Accessibility & i18n
 - Keyboard navigation for palette and grid (arrow keys to move, Enter to paint).
 - Focus states and ARIA labels for controls.
 - Contrast-safe default theme; prefers-reduced-motion.
@@ -106,13 +96,13 @@ This document outlines the next steps for features, integrations, and fixes. Eac
 - Acceptance criteria:
   - Axe or Lighthouse Accessibility score ≥ 95; basic keyboard-only flow works.
 
-## 9) PWA (Optional, later)
+## 8) PWA (Optional, later)
 - Add `manifest.webmanifest`, icons, and offline caching for static assets.
 - Installable experience; lightweight service worker with cache-first for assets.
 - Acceptance criteria:
   - Lighthouse PWA installable; works offline for core UI.
 
-## 10) Documentation & Ops
+## 9) Documentation & Ops
 - Update `README.md` with features, privacy policy link, and local dev notes.
 - Add `CONTRIBUTING.md` with code style and commit tips.
 - Add simple `docs/PRIVACY.md` and link from footer.
@@ -129,11 +119,9 @@ This document outlines the next steps for features, integrations, and fixes. Eac
    - Define reserved ad slots in `index.html`; add `assets/js/ads.js` loader gated by consent.
 4. SEO essentials
    - Add meta/OG/Twitter/JSON-LD to `index.html`; commit `robots.txt` and `sitemap.xml` with placeholder URLs.
-5. Weathering counter fix
-   - Implement dataset-based counting in `updateColorSummary()`; ensure all paint paths set `dataset.baseColor`.
-6. Export & share
+5. Export & share
    - Add `assets/js/export.js` for PNG/SVG; add URL state serializer/deserializer.
-7. Accessibility pass
+6. Accessibility pass
    - Keyboard interactions, focus states, aria labels; verify with Lighthouse/Axe.
 
 ---

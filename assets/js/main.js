@@ -3,8 +3,6 @@ class HydraulicFloorGenerator {
         this.selectedColor = '#2c3e50';
         this.gridRows = 20;
         this.gridCols = 20;
-        this.weatheringEnabled = true;
-        this.weatheringIntensity = 0.15; // 15%
         this.colorNames = {
             '#2C3E50': 'Navy',
             '#8B3A3A': 'Burgundy', 
@@ -25,7 +23,6 @@ class HydraulicFloorGenerator {
         this.setupTileInteraction();
         this.setupGridSizeControls();
         this.setupAutoFill();
-        this.setupWeatheringControls();
     }
 
     createGrid() {
@@ -171,28 +168,6 @@ class HydraulicFloorGenerator {
         });
     }
 
-    setupWeatheringControls() {
-        const enabledEl = document.getElementById('weathering-enabled');
-        const intensityEl = document.getElementById('weathering-intensity');
-        const valueEl = document.getElementById('weathering-intensity-value');
-
-        if (!enabledEl || !intensityEl || !valueEl) return;
-
-        enabledEl.checked = this.weatheringEnabled;
-        intensityEl.value = Math.round(this.weatheringIntensity * 100);
-        valueEl.textContent = `${Math.round(this.weatheringIntensity * 100)}%`;
-
-        enabledEl.addEventListener('change', () => {
-            this.weatheringEnabled = enabledEl.checked;
-        });
-
-        intensityEl.addEventListener('input', () => {
-            const pct = parseInt(intensityEl.value, 10) || 0;
-            this.weatheringIntensity = Math.max(0, Math.min(1, pct / 100));
-            valueEl.textContent = `${pct}%`;
-        });
-    }
-
     generateBeautifulDesign() {
         const tileColors = [
             {color: "#2C3E50", name: "navy", weight: 5},
@@ -219,16 +194,13 @@ class HydraulicFloorGenerator {
         // Step 3: Fill remaining positions with weighted selection
         this.fillRemainingPositions(hexCoordinates, colorMap, tileColors);
         
-        // Step 4: Apply colors to tiles (with optional weathering)
+        // Step 4: Apply colors to tiles
         tiles.forEach(tile => {
             const row = parseInt(tile.dataset.row);
             const col = parseInt(tile.dataset.col);
             const key = `${row}-${col}`;
             const baseColor = colorMap.get(key) || this.weightedRandomSelect(tileColors);
-            const finalColor = (this.weatheringEnabled && this.weatheringIntensity > 0)
-                ? this.applyWeathering(baseColor, this.weatheringIntensity)
-                : baseColor;
-            this.paintTile(tile, finalColor);
+            this.paintTile(tile, baseColor);
         });
     }
 
@@ -384,21 +356,6 @@ class HydraulicFloorGenerator {
         return weightedOptions[0].color;
     }
 
-    // (Removed duplicate paintTile; unified above)
-
-    applyWeathering(color, intensity) {
-        const rgb = this.hexToRgb(color);
-        if (!rgb) return color;
-        const vary = (channel) => {
-            const factor = 1 + (Math.random() * 2 - 1) * intensity; // 1 ± intensity
-            return this.clamp(Math.round(channel * factor), 0, 255);
-        };
-        const r = vary(rgb.r);
-        const g = vary(rgb.g);
-        const b = vary(rgb.b);
-        return this.rgbToHex(`rgb(${r}, ${g}, ${b})`);
-    }
-
     updateColorSummary() {
         const tiles = document.querySelectorAll('.hex-tile');
         const colorCounts = {};
@@ -455,24 +412,6 @@ class HydraulicFloorGenerator {
         const b = parseInt(rgbMatch[3]);
         
         return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
-    }
-
-    // (Removed duplicate clearGrid; unified above)
-
-    hexToRgb(hex) {
-        if (!hex || typeof hex !== 'string') return null;
-        const m = hex.trim().toLowerCase().match(/^#([0-9a-f]{6})$/i);
-        if (!m) return null;
-        const num = parseInt(m[1], 16);
-        return {
-            r: (num >> 16) & 255,
-            g: (num >> 8) & 255,
-            b: num & 255
-        };
-    }
-
-    clamp(value, min, max) {
-        return Math.min(max, Math.max(min, value));
     }
 
     generateRandomPattern() {

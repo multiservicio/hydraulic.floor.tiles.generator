@@ -15,7 +15,6 @@ DEFINE tile_colors = [
 
 DEFINE cluster_probability = 0.3  // 30% chance for clustering
 DEFINE cluster_size_range = [2, 5]  // Cluster contains 2-5 tiles
-DEFINE variation_intensity = 0.15   // 15% color variation for weathering
 
 // Main Algorithm
 FUNCTION generateHexFloor(grid_width, grid_height):
@@ -60,13 +59,6 @@ FUNCTION generateHexFloor(grid_width, grid_height):
             selected_color = weightedRandomSelect(influenced_weights)
             color_map[position] = selected_color
         END IF
-    END FOR
-    
-    // Step 6: Apply weathering and variations
-    FOR each position in hex_coordinates:
-        base_color = color_map[position]
-        weathered_color = applyWeathering(base_color, variation_intensity)
-        color_map[position] = weathered_color
     END FOR
     
     RETURN color_map, hex_coordinates
@@ -155,20 +147,6 @@ FUNCTION weightedRandomSelect(weighted_options):
     END FOR
     
     RETURN weighted_options[0].color  // Fallback
-END FUNCTION
-
-FUNCTION applyWeathering(base_color, intensity):
-    // Convert hex to RGB
-    rgb = hexToRgb(base_color)
-    
-    // Apply random variations to each channel
-    FOR each channel in [r, g, b]:
-        variation = random(-intensity, intensity)
-        rgb[channel] = clamp(rgb[channel] * (1 + variation), 0, 255)
-    END FOR
-    
-    // Convert back to hex
-    RETURN rgbToHex(rgb)
 END FUNCTION
 
 // Usage
