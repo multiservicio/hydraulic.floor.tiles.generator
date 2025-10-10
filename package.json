@@ -1,0 +1,30 @@
+{
+    "name": "hydraulic.floor.tiles.generator",
+    "version": "1.0.0",
+    "description": "A small, static web app to design hex‑tile \"hydraulic\" floors. Paint tiles manually or auto‑generate patterns.",
+    "main": "index.js",
+    "directories": {
+        "doc": "docs"
+    },
+    "scripts": {
+        "format": "biome format --write .",
+        "format:check": "biome format .",
+        "lint": "biome lint .",
+        "check": "biome check ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/multiservicio/hydraulic.floor.tiles.generator.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/multiservicio/hydraulic.floor.tiles.generator/issues"
+    },
+    "homepage": "https://github.com/multiservicio/hydraulic.floor.tiles.generator#readme",
+    "devDependencies": {
+        "@biomejs/biome": "^2.2.5"
+    }
+}
