@@ -1,19 +1,109 @@
+const PALETTE = [
+    {
+        id: 'navy',
+        hex: '#2C3E50',
+        name: 'Navy',
+        weight: 5,
+        cluster: {
+            role: 'accent',
+            maxCount: 2,
+            tilesPerCluster: 20,
+            minSize: 2,
+            maxSize: 4,
+            spawnChance: 1,
+        },
+        complements: ['cream'],
+    },
+    {
+        id: 'burgundy',
+        hex: '#8B3A3A',
+        name: 'Burgundy',
+        weight: 15,
+        cluster: {
+            role: 'medium',
+            minCount: 2,
+            maxCount: 5,
+            minSize: 2,
+            maxSize: 5,
+            spawnChance: 0.3,
+        },
+        complements: ['light_gray'],
+    },
+    {
+        id: 'cream',
+        hex: '#F5F5DC',
+        name: 'Cream',
+        weight: 25,
+        complements: ['navy'],
+    },
+    {
+        id: 'terracotta',
+        hex: '#CD853F',
+        name: 'Terracotta',
+        weight: 12,
+        cluster: {
+            role: 'medium',
+            minCount: 2,
+            maxCount: 5,
+            minSize: 2,
+            maxSize: 5,
+            spawnChance: 0.3,
+        },
+        complements: ['warm_gray'],
+    },
+    {
+        id: 'light_gray',
+        hex: '#D3D3D3',
+        name: 'Light Gray',
+        weight: 20,
+        complements: ['burgundy'],
+    },
+    {
+        id: 'medium_gray',
+        hex: '#A9A9A9',
+        name: 'Medium Gray',
+        weight: 18,
+    },
+    {
+        id: 'beige',
+        hex: '#F5DEB3',
+        name: 'Beige',
+        weight: 15,
+    },
+    {
+        id: 'warm_gray',
+        hex: '#C0C0C0',
+        name: 'Warm Gray',
+        weight: 10,
+        complements: ['terracotta'],
+    },
+    {
+        id: 'dusty_rose',
+        hex: '#D4A5A5',
+        name: 'Dusty Rose',
+        weight: 8,
+    },
+];
+
 class HydraulicFloorGenerator {
     constructor() {
-        this.selectedColor = '#2c3e50';
+        this.palette = PALETTE;
+        this.paletteLookup = this.palette.reduce((acc, color) => {
+            acc[color.hex.toUpperCase()] = color;
+            return acc;
+        }, {});
+        this.baseWeights = this.palette.map((color) => ({
+            color: color.hex,
+            id: color.id,
+            weight: color.weight,
+        }));
+        this.selectedColor = this.palette[0]?.hex || '#2C3E50';
         this.gridRows = 20;
         this.gridCols = 20;
-        this.colorNames = {
-            '#2C3E50': 'Navy',
-            '#8B3A3A': 'Burgundy',
-            '#F5F5DC': 'Cream',
-            '#CD853F': 'Terracotta',
-            '#D3D3D3': 'Light Gray',
-            '#A9A9A9': 'Medium Gray',
-            '#F5DEB3': 'Beige',
-            '#C0C0C0': 'Warm Gray',
-            '#D4A5A5': 'Dusty Rose',
-        };
+        this.colorNames = this.palette.reduce((acc, color) => {
+            acc[color.hex.toUpperCase()] = color.name;
+            return acc;
+        }, {});
         this.init();
     }
 
@@ -169,37 +259,26 @@ class HydraulicFloorGenerator {
     }
 
     generateBeautifulDesign() {
-        const tileColors = [
-            { color: '#2C3E50', name: 'navy', weight: 5 },
-            { color: '#8B3A3A', name: 'burgundy', weight: 15 },
-            { color: '#F5F5DC', name: 'cream', weight: 25 },
-            { color: '#CD853F', name: 'terracotta', weight: 12 },
-            { color: '#D3D3D3', name: 'light_gray', weight: 20 },
-            { color: '#A9A9A9', name: 'medium_gray', weight: 18 },
-            { color: '#F5DEB3', name: 'beige', weight: 15 },
-            { color: '#C0C0C0', name: 'warm_gray', weight: 10 },
-            { color: '#D4A5A5', name: 'dusty_rose', weight: 8 },
-        ];
-
         const tiles = document.querySelectorAll('.hex-tile');
         const colorMap = new Map();
         const hexCoordinates = this.generateHexCoordinates();
+        const baseWeights = this.baseWeights;
 
-        // Step 1: Place navy clusters (accent colors)
-        this.placeNavyClusters(hexCoordinates, colorMap);
+        // Step 1: Place accent color clusters
+        this.placeAccentClusters(hexCoordinates, colorMap);
 
         // Step 2: Place medium-frequency color clusters
-        this.placeMediumClusters(hexCoordinates, colorMap, tileColors);
+        this.placeMediumClusters(hexCoordinates, colorMap);
 
         // Step 3: Fill remaining positions with weighted selection
-        this.fillRemainingPositions(hexCoordinates, colorMap, tileColors);
+        this.fillRemainingPositions(hexCoordinates, colorMap, baseWeights);
 
         // Step 4: Apply colors to tiles
         tiles.forEach((tile) => {
             const row = parseInt(tile.dataset.row);
             const col = parseInt(tile.dataset.col);
             const key = `${row}-${col}`;
-            const baseColor = colorMap.get(key) || this.weightedRandomSelect(tileColors);
+            const baseColor = colorMap.get(key) || this.weightedRandomSelect(baseWeights);
             this.paintTile(tile, baseColor);
         });
     }
@@ -216,29 +295,51 @@ class HydraulicFloorGenerator {
         return coordinates;
     }
 
-    placeNavyClusters(hexCoordinates, colorMap) {
-        const clusterCount = Math.min(2, Math.floor(hexCoordinates.length / 20));
-        for (let i = 0; i < clusterCount; i++) {
-            const seedPosition = this.getRandomPosition(hexCoordinates, colorMap);
-            if (seedPosition) {
-                const clusterSize = 2 + Math.floor(Math.random() * 3);
-                this.plantCluster(seedPosition, '#2C3E50', clusterSize, hexCoordinates, colorMap);
+    placeAccentClusters(hexCoordinates, colorMap) {
+        const accentColors = this.palette.filter(
+            (color) => color.cluster && color.cluster.role === 'accent'
+        );
+
+        accentColors.forEach((accent) => {
+            const { cluster } = accent;
+            const tilesPerCluster = cluster.tilesPerCluster || 20;
+            const clusterBudget = Math.min(
+                cluster.maxCount,
+                Math.floor(hexCoordinates.length / tilesPerCluster)
+            );
+
+            for (let i = 0; i < clusterBudget; i++) {
+                const seedPosition = this.getRandomPosition(hexCoordinates, colorMap);
+                if (seedPosition) {
+                    const clusterSize = this.getRandomInt(cluster.minSize, cluster.maxSize);
+                    this.plantCluster(
+                        seedPosition,
+                        accent.hex,
+                        clusterSize,
+                        hexCoordinates,
+                        colorMap
+                    );
+                }
             }
-        }
+        });
     }
 
-    placeMediumClusters(hexCoordinates, colorMap, tileColors) {
-        const mediumColors = ['#8B3A3A', '#CD853F'];
+    placeMediumClusters(hexCoordinates, colorMap) {
+        const mediumColors = this.palette.filter(
+            (color) => color.cluster && color.cluster.role === 'medium'
+        );
+
         mediumColors.forEach((color) => {
-            const clusterCount = 2 + Math.floor(Math.random() * 4);
+            const { cluster } = color;
+            const clusterCount = this.getRandomInt(cluster.minCount, cluster.maxCount);
             for (let i = 0; i < clusterCount; i++) {
-                if (Math.random() < 0.3) {
+                if (Math.random() < (cluster.spawnChance || 1)) {
                     const seedPosition = this.getRandomPosition(hexCoordinates, colorMap);
                     if (seedPosition) {
-                        const clusterSize = 2 + Math.floor(Math.random() * 4);
+                        const clusterSize = this.getRandomInt(cluster.minSize, cluster.maxSize);
                         this.plantCluster(
                             seedPosition,
-                            color,
+                            color.hex,
                             clusterSize,
                             hexCoordinates,
                             colorMap
@@ -249,11 +350,11 @@ class HydraulicFloorGenerator {
         });
     }
 
-    fillRemainingPositions(hexCoordinates, colorMap, tileColors) {
+    fillRemainingPositions(hexCoordinates, colorMap, baseWeights) {
         hexCoordinates.forEach((position) => {
             if (!colorMap.has(position.key)) {
                 const neighborColors = this.getNeighborColors(position, colorMap, hexCoordinates);
-                const adjustedWeights = this.adjustWeightsByNeighbors(tileColors, neighborColors);
+                const adjustedWeights = this.adjustWeightsByNeighbors(baseWeights, neighborColors);
                 const selectedColor = this.weightedRandomSelect(adjustedWeights);
                 colorMap.set(position.key, selectedColor);
             }
@@ -324,6 +425,12 @@ class HydraulicFloorGenerator {
             .filter((color) => color !== undefined);
     }
 
+    getRandomInt(min, max) {
+        const lower = Math.ceil(min);
+        const upper = Math.floor(max);
+        return Math.floor(Math.random() * (upper - lower + 1)) + lower;
+    }
+
     adjustWeightsByNeighbors(baseWeights, neighborColors) {
         const adjusted = baseWeights.map((w) => ({ ...w }));
 
@@ -341,17 +448,14 @@ class HydraulicFloorGenerator {
     }
 
     isComplementaryColor(color1, color2) {
-        const complementaryPairs = [
-            ['#2C3E50', '#F5F5DC'], // Navy with Cream
-            ['#8B3A3A', '#D3D3D3'], // Burgundy with Light Gray
-            ['#CD853F', '#C0C0C0'], // Terracotta with Warm Gray
-        ];
+        const first = this.paletteLookup[color1.toUpperCase()];
+        const second = this.paletteLookup[color2.toUpperCase()];
 
-        return complementaryPairs.some(
-            (pair) =>
-                (pair[0] === color1 && pair[1] === color2) ||
-                (pair[1] === color1 && pair[0] === color2)
-        );
+        if (!first || !second || !first.complements || first.complements.length === 0) {
+            return false;
+        }
+
+        return first.complements.some((complementId) => complementId === second.id);
     }
 
     weightedRandomSelect(weightedOptions) {
@@ -435,17 +539,7 @@ class HydraulicFloorGenerator {
 
     generateRandomPattern() {
         const tiles = document.querySelectorAll('.hex-tile');
-        const colors = [
-            '#2C3E50',
-            '#8B3A3A',
-            '#F5F5DC',
-            '#CD853F',
-            '#D3D3D3',
-            '#A9A9A9',
-            '#F5DEB3',
-            '#C0C0C0',
-            '#D4A5A5',
-        ];
+        const colors = this.palette.map((color) => color.hex);
 
         tiles.forEach((tile) => {
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
