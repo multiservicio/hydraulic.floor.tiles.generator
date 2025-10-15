@@ -1,4 +1,8 @@
 {
-    "workbench.colorTheme": "Visual Studio Light",
+    "workbench.colorTheme": "Nord",
     "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.biome": "explicit"
+    },
+    "gitlens.statusBar.pullRequests.enabled": false
 }

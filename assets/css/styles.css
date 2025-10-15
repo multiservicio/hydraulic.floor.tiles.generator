@@ -5,7 +5,7 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: "Arial", sans-serif;
     background-color: #f5f6fa;
     color: #ecf0f1;
     line-height: 1.6;
@@ -37,7 +37,7 @@ header p {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 30px;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -55,7 +55,7 @@ header p {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    color:#2c3e50;
+    color: #2c3e50;
 }
 
 .size-inputs label {
@@ -162,7 +162,7 @@ header p {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     overflow: auto;
 }
 
@@ -224,7 +224,7 @@ header p {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-top: 30px;
 }
 
@@ -260,7 +260,7 @@ header p {
     height: 20px;
     border-radius: 50%;
     border: 2px solid #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .color-count-text {
@@ -273,40 +273,40 @@ header p {
     .container {
         padding: 10px;
     }
-    
+
     h1 {
         font-size: 2rem;
     }
-    
+
     .controls {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .hex-tile {
         width: 40px;
         height: 35px;
         margin: 10px 0;
     }
-    
+
     .hex-tile:before,
     .hex-tile:after {
         border-left-width: 20px;
         border-right-width: 20px;
     }
-    
+
     .hex-tile:before {
         border-bottom-width: 10px;
     }
-    
+
     .hex-tile:after {
         border-top-width: 10px;
     }
-    
+
     .hex-tile.row-offset {
         margin-left: 20px;
     }
-    
+
     .floor-grid {
         grid-template-columns: repeat(auto-fit, 40px);
     }
