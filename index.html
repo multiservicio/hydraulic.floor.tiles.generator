@@ -9,8 +9,9 @@
 <body>
     <div class="container">
         <header>
-            <h1>Hydraulic Floor Generator</h1>
-            <p>Create beautiful hexagonal floor designs</p>
+            <h1 class="hero-title">Hydraulic Floor Generator</h1>
+            <div class="hero-flourish" aria-hidden="true"></div>
+            <p class="hero-subtitle">Create beautiful hexagonal floor designs</p>
         </header>
 
         <div class="controls">
@@ -23,63 +24,62 @@
                     <label>
                         Height: <input type="number" id="grid-height" min="5" max="30" value="10"> tiles
                     </label>
-                    <button id="resize-grid" class="resize-btn">Resize Floor</button>
-                    <button id="auto-fill" class="auto-fill-btn">Generate Beautiful Design</button>
+                    <div class="size-actions">
+                        <button id="resize-grid" class="resize-btn">Resize Floor</button>
+                        <button id="auto-fill" class="auto-fill-btn">Generate Beautiful Design</button>
+                    </div>
                 </div>
             </div>
 
             <div class="color-palette">
                 <h3>Select Color</h3>
                 <div class="color-options">
-                    <div class="color-item">
-                        <div class="color-option" data-color="#2C3E50" style="background-color: #2C3E50;"></div>
+                    <button class="color-item" type="button" data-color="#2C3E50">
+                        <span class="color-option" style="background-color: #2C3E50;"></span>
                         <span class="color-name">Navy</span>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-option" data-color="#8B3A3A" style="background-color: #8B3A3A;"></div>
+                    </button>
+                    <button class="color-item" type="button" data-color="#8B3A3A">
+                        <span class="color-option" style="background-color: #8B3A3A;"></span>
                         <span class="color-name">Burgundy</span>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-option" data-color="#F5F5DC" style="background-color: #F5F5DC;"></div>
+                    </button>
+                    <button class="color-item" type="button" data-color="#F5F5DC">
+                        <span class="color-option" style="background-color: #F5F5DC;"></span>
                         <span class="color-name">Cream</span>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-option" data-color="#CD853F" style="background-color: #CD853F;"></div>
+                    </button>
+                    <button class="color-item" type="button" data-color="#CD853F">
+                        <span class="color-option" style="background-color: #CD853F;"></span>
                         <span class="color-name">Terracotta</span>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-option" data-color="#D3D3D3" style="background-color: #D3D3D3;"></div>
+                    </button>
+                    <button class="color-item" type="button" data-color="#D3D3D3">
+                        <span class="color-option" style="background-color: #D3D3D3;"></span>
                         <span class="color-name">Light Gray</span>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-option" data-color="#A9A9A9" style="background-color: #A9A9A9;"></div>
+                    </button>
+                    <button class="color-item" type="button" data-color="#A9A9A9">
+                        <span class="color-option" style="background-color: #A9A9A9;"></span>
                         <span class="color-name">Medium Gray</span>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-option" data-color="#F5DEB3" style="background-color: #F5DEB3;"></div>
+                    </button>
+                    <button class="color-item" type="button" data-color="#F5DEB3">
+                        <span class="color-option" style="background-color: #F5DEB3;"></span>
                         <span class="color-name">Beige</span>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-option" data-color="#C0C0C0" style="background-color: #C0C0C0;"></div>
+                    </button>
+                    <button class="color-item" type="button" data-color="#C0C0C0">
+                        <span class="color-option" style="background-color: #C0C0C0;"></span>
                         <span class="color-name">Warm Gray</span>
-                    </div>
-                    <div class="color-item">
-                        <div class="color-option" data-color="#D4A5A5" style="background-color: #D4A5A5;"></div>
+                    </button>
+                    <button class="color-item" type="button" data-color="#D4A5A5">
+                        <span class="color-option" style="background-color: #D4A5A5;"></span>
                         <span class="color-name">Dusty Rose</span>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>
 
         <div class="floor-grid-container">
-            <div id="floor-grid" class="floor-grid"></div>
-        </div>
-
-        <div class="color-summary-card">
-            <h3>Color Summary</h3>
-            <div id="color-summary" class="color-summary-content">
-                <p class="no-colors">No tiles colored yet. Start designing your floor!</p>
+            <div class="color-summary-card color-summary-floating is-hidden">
+                <h3>Color Summary</h3>
+                <div id="color-summary" class="color-summary-content"></div>
             </div>
+            <div id="floor-grid" class="floor-grid"></div>
         </div>
     </div>
 

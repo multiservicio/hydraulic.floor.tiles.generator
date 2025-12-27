@@ -144,9 +144,10 @@ class HydraulicFloorGenerator {
     }
 
     setupColorPalette() {
-        const colorOptions = document.querySelectorAll('.color-option');
+        const colorOptions = document.querySelectorAll('.color-item');
 
         colorOptions[0].classList.add('selected');
+        this.selectedColor = colorOptions[0].dataset.color;
 
         colorOptions.forEach((option) => {
             option.addEventListener('click', () => {
@@ -493,11 +494,17 @@ class HydraulicFloorGenerator {
 
     renderColorSummary(colorCounts) {
         const summaryContainer = document.getElementById('color-summary');
+        const summaryCard = summaryContainer.closest('.color-summary-card');
 
         if (Object.keys(colorCounts).length === 0) {
-            summaryContainer.innerHTML =
-                '<p class="no-colors">No tiles colored yet. Start designing your floor!</p>';
+            summaryContainer.innerHTML = '';
+            if (summaryCard) {
+                summaryCard.classList.add('is-hidden');
+            }
             return;
+        }
+        if (summaryCard) {
+            summaryCard.classList.remove('is-hidden');
         }
 
         // Sort by count (descending) then by color name
